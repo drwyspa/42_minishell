@@ -6,7 +6,7 @@
 /*   By: pjedrycz <p.jedryczkowski@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 18:39:54 by pjedrycz          #+#    #+#             */
-/*   Updated: 2024/12/03 19:48:19 by pjedrycz         ###   ########.fr       */
+/*   Updated: 2024/12/04 21:47:34 by pjedrycz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ void	free_data(t_data *data, bool clear_history)
 		data->usr_input = NULL;
 	}
 	if (data && data->token)
-		lstclear_token(&data->token, &free_ptr);/////
+		lstclear_token(&data->token, &free_ptr);
 	if (data && &data->cmd)
-		lst_clear_cmd(&data->cmd, &free_ptr);//////
+		lst_clear_cmd(&data->cmd, &free_ptr);
 	if (clear_history == true)
 	{
 		if (data && data->working_dir)
@@ -76,5 +76,33 @@ void	free_data(t_data *data, bool clear_history)
 // and STDOUT fd's.
 void	close_fds(t_command *cmds, bool close_backups)
 {
+	if (cmds->io_fds)
+	{
+		if (cmds->io_fds->fd_in != -1)
+			close(cmds->io_fds->fd_in);
+		if (cmds->io_fds->fd_out != -1)
+			close(cmds->io_fds->fd_out);
+		if (close_backups)
+			restore_io(cmds->io_fds);
+	}
+	close_pipe_fds(cmds, NULL);
+}
 
+// Frees input / output fd's
+void	free_io(t_io_fds *io)
+{
+	if (!io)
+		return ;
+	restore_io(io);
+	if (io->heredoc_delimiter)
+	{
+		unlink(io->infile);
+		free_ptr(io->heredoc_delimiter);
+	}
+	if (io->infile)
+		free_ptr(io->infile);
+	if (io->outfile)
+		free_ptr(io->outfile);
+	if (io)
+		free_ptr(io);
 }

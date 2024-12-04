@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit.c                                             :+:      :+:    :+:   */
+/*   pipe.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pjedrycz <p.jedryczkowski@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 18:50:37 by pjedrycz          #+#    #+#             */
-/*   Updated: 2024/12/03 18:57:33 by pjedrycz         ###   ########.fr       */
+/*   Created: 2024/12/04 21:44:16 by pjedrycz          #+#    #+#             */
+/*   Updated: 2024/12/04 21:47:26 by pjedrycz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Close all fd's and frees all allocated memory. 
-// Then exit the program.
-void	exit_shell(t_data *data, int exno)
+void	close_pipe_fds(t_command *cmds, t_command *skip_cmd)
 {
-	if (data)
+	while (cmds)
 	{
-		if (data->cmd && data->cmd->io_fds)
-			close_fds(data->cmd, true);/////
-		free_data(data, true);////
+		if (cmds != skip_cmd && cmds->pipe_fd)
+		{
+			close(cmds->pipe_fd[0]);
+			close(cmds->pipe_fd[1]);
+		}
+		cmds = cmds->next;
 	}
-	exit(exno);
 }

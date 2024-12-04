@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pjedrycz <p.jedryczkowski@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 18:18:08 by pjedrycz          #+#    #+#             */
-/*   Updated: 2024/12/03 18:25:54 by pjedrycz         ###   ########.fr       */
+/*   Created: 2024/12/03 18:50:37 by pjedrycz          #+#    #+#             */
+/*   Updated: 2024/12/04 22:25:21 by pjedrycz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// For start up check - prints usage message if arguments
-// are not valid.
-bool	usage_message(bool return_val)
+// Close all fd's and frees all allocated memory. 
+// Then exit the program.
+void	exit_shell(t_data *data, int exno)
 {
-	ft_putendl_fd("Usage: ./minishell", 2);
-	ft_putendl_fd("Usage: ./minishell -c \"input line\"", 2);
-	return (return_val);
+	if (data)
+	{
+		if (data->cmd && data->cmd->io_fds)
+			close_fds(data->cmd, true);
+		free_data(data, true);
+	}
+	exit(exno);
 }
