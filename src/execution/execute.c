@@ -6,7 +6,7 @@
 /*   By: pjedrycz <p.jedryczkowski@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 21:39:57 by pjedrycz          #+#    #+#             */
-/*   Updated: 2024/12/06 21:51:34 by pjedrycz         ###   ########.fr       */
+/*   Updated: 2024/12/09 22:32:45 by pjedrycz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,14 @@ static int	prep_for_exec(t_data *data)
 	if (!data || !data->cmd)
 		return (EXIT_SUCCESS);
 	if(!data->cmd->cmd)
+	{
+		if (data->cmd->io_fds
+			&& !check_infile_outfile(data->cmd->io_fds))
+			return (EXIT_FAILURE);
+	}
+	if (!create_pipes(data))
+		return (EXIT_FAILURE);
+	return (CMD_NOT_FOUND);
 }
 
 // Takes command from user and executed it by creating children processes.
@@ -33,5 +41,14 @@ int	execute(t_data *data)
 {
 	int	ret;
 
-	ret = prep_for_exec(data);/////
+	ret = prep_for_exec(data);
+	if (ret != CMD_NOT_FOUND)
+		return (ret);
+	if (!data->cmd->pipe_output && !data->cmd->prev
+		&& check_infile_outfile(data->cmd->io_fds))
+	{
+		redirect_io(data->cmd->io_fds);
+		ret = execute_builtin(data, data->cmd);//////
+
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: pjedrycz <p.jedryczkowski@gmail.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/02 22:16:14 by pjedrycz          #+#    #+#             */
-/*   Updated: 2024/12/06 22:54:30 by pjedrycz         ###   ########.fr       */
+/*   Updated: 2024/12/09 22:32:47 by pjedrycz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,8 @@ char	*get_env_var_value(char **env, char *var);
 bool	is_valid_env_var_key(char *var);
 
 //env_set.c
+bool	set_env_var(t_data *data, char *key, char *value);
+bool	remove_env_var(t_data *data, int indx);
 
 //execute.c
 
@@ -142,7 +144,8 @@ bool	is_valid_env_var_key(char *var);
 
 
 //execute_utils.c
-
+bool	cmd_is_dir(char *cmd);
+int	check_cmmd_not_found(t_data * data, t_command *cmd);
 
 
 //pipe.c
